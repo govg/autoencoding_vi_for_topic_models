@@ -34,7 +34,7 @@ class VAE(object):
 
         '''-------Constructing Laplace Approximation to Dirichlet Prior--------------'''
         self.h_dim = float(network_architecture["n_z"])
-        self.a = 1*np.ones((1 , self.h_dim)).astype(np.float32)
+        self.a = 1*np.ones((1 , int(self.h_dim))).astype(np.float32)
         self.mu2 = tf.constant((np.log(self.a).T-np.mean(np.log(self.a),1)).T)
         self.var2 = tf.constant(  ( ( (1.0/self.a)*( 1 - (2.0/self.h_dim) ) ).T +
                                 ( 1.0/(self.h_dim*self.h_dim) )*np.sum(1.0/self.a,1) ).T  )
@@ -57,7 +57,7 @@ class VAE(object):
         eps = tf.random_normal((1, n_z), 0, 1,
                                dtype=tf.float32)
         self.z = tf.add(self.z_mean,
-                        tf.mul(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
+                        tf.multiply(tf.sqrt(tf.exp(self.z_log_sigma_sq)), eps))
         self.sigma = tf.exp(self.z_log_sigma_sq)
         self.x_reconstr_mean = \
             self._generator_network(self.z,self.network_weights["weights_gener"])
@@ -106,7 +106,7 @@ class VAE(object):
             -tf.reduce_sum(self.x * tf.log(self.x_reconstr_mean),1)#/tf.reduce_sum(self.x,1)
 
         latent_loss = 0.5*( tf.reduce_sum(tf.div(self.sigma,self.var2),1)+\
-        tf.reduce_sum( tf.mul(tf.div((self.mu2 - self.z_mean),self.var2),
+        tf.reduce_sum( tf.multiply(tf.div((self.mu2 - self.z_mean),self.var2),
                   (self.mu2 - self.z_mean)),1) - self.h_dim +\
                            tf.reduce_sum(tf.log(self.var2),1)  - tf.reduce_sum(self.z_log_sigma_sq  ,1) )
 
