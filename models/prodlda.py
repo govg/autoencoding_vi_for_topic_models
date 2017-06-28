@@ -36,7 +36,7 @@ class VAE(object):
         self.keep_prob = tf.placeholder(tf.float32)
 
         self.h_dim = float(network_architecture["n_z"])
-        self.a = 1*np.ones((1 , self.h_dim)).astype(np.float32)
+        self.a = 1*np.ones((1 , int(self.h_dim))).astype(np.float32)
         self.mu2 = tf.constant((np.log(self.a).T-np.mean(np.log(self.a),1)).T)
         self.var2 = tf.constant(  ( ( (1.0/self.a)*( 1 - (2.0/self.h_dim) ) ).T +
                                 ( 1.0/(self.h_dim*self.h_dim) )*np.sum(1.0/self.a,1) ).T  )
